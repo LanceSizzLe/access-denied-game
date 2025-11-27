@@ -165,28 +165,36 @@ const Game = {
         Utils.addLog(`> AP: ${this.actionPoints} | Intel: ${this.intelligence}`, 'system');
     },
     
-    /**
-     * Select an action
-     */
-    selectAction(action) {
-        const costs = { scan: 1, probe: 2, exploit: 3 };
-        const cost = costs[action];
-        
-        if (this.actionPoints < cost) {
-            Utils.showNotification('INSUFFICIENT AP', `${action.toUpperCase()} requires ${cost} AP (You have ${this.actionPoints})`, 'error');
-            Utils.addLog(`✕ Insufficient AP for ${action.toUpperCase()}`, 'error');
-            return;
-        }
-        
-        this.currentAction = action;
-        UI.updateActionButtons(this.actionPoints, action);
-        
-        Utils.addLog(`> Action selected: ${action.toUpperCase()} (${cost} AP)`, 'action');
-        Utils.showNotification('ACTION SELECTED', `Click enemy grid to ${action.toUpperCase()}`, 'info', 3000);
-        
-        // Highlight enemy grid
-        document.getElementById('opponent-board').style.boxShadow = '0 0 30px rgba(255, 255, 0, 0.5)';
-    },
+/**
+ * Select an action
+ */
+selectAction(action) {
+    const costs = { scan: 1, probe: 2, exploit: 3 };
+    const cost = costs[action];
+    
+    if (this.actionPoints < cost) {
+        Utils.showNotification('INSUFFICIENT AP', `${action.toUpperCase()} requires ${cost} AP (You have ${this.actionPoints})`, 'error');
+        Utils.addLog(`✕ Insufficient AP for ${action.toUpperCase()}`, 'error');
+        return;
+    }
+    
+    // Set current action
+    this.currentAction = action;
+    
+    // Update UI
+    UI.updateActionButtons(this.actionPoints, action);
+    
+    // Log
+    Utils.addLog(`> Action selected: ${action.toUpperCase()} (${cost} AP)`, 'action');
+    Utils.showNotification('ACTION SELECTED', `Click ENEMY NETWORK to ${action.toUpperCase()}`, 'info', 4000);
+    
+    // Visual feedback - highlight enemy grid
+    const enemyBoard = document.getElementById('opponent-board');
+    enemyBoard.style.boxShadow = '0 0 30px rgba(255, 255, 0, 0.6)';
+    enemyBoard.style.borderColor = 'var(--color-caution-yellow)';
+    
+    console.log(`Action selected: ${action}, currentAction is now: ${this.currentAction}`); // DEBUG
+}
     
     /**
      * Execute selected action on target cell

@@ -297,15 +297,16 @@ body {
     color: var(--color-warning-red);
 }
 
-/* ===== GAME AREA - FITTED GRID ===== */
+/* ===== GAME AREA - FIXED GRID LAYOUT ===== */
 .game-area {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 350px 1fr;
-    gap: var(--spacing-md);
+    grid-template-columns: minmax(300px, 1fr) 380px minmax(300px, 1fr);
+    gap: var(--spacing-lg);
     padding: var(--spacing-md);
     overflow: hidden;
     min-height: 0;
+    align-items: start;
 }
 
 /* ===== FOOTER - COMPACT ===== */

@@ -61,16 +61,23 @@ class Board {
         }
     }
     
-    /**
-     * Handle cell click
-     */
-    handleCellClick(row, col) {
-        if (this.isOpponent && Game.currentAction) {
-            Game.executeAction(row, col);
-        } else if (!this.isOpponent) {
-            this.selectCell(row, col);
-        }
+/**
+ * Handle cell click
+ */
+handleCellClick(row, col) {
+    console.log(`Cell clicked: ${row}, ${col}, isOpponent: ${this.isOpponent}`); // DEBUG
+    
+    if (this.isOpponent && Game.currentAction) {
+        // This is enemy grid and we have an action selected
+        Game.executeAction(row, col);
+    } else if (!this.isOpponent) {
+        // This is our own grid
+        this.selectCell(row, col);
+    } else if (this.isOpponent && !Game.currentAction) {
+        // Clicked enemy grid without selecting action
+        Utils.showNotification('NO ACTION', 'Select SCAN, PROBE, or EXPLOIT first!', 'warning', 2000);
     }
+}
     
     /**
      * Select a cell

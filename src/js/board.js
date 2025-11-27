@@ -65,17 +65,26 @@ class Board {
  * Handle cell click
  */
 handleCellClick(row, col) {
-    console.log(`Cell clicked: ${row}, ${col}, isOpponent: ${this.isOpponent}`); // DEBUG
+    const coord = Utils.indexToCoord(row, col);
+    console.log(`Cell clicked: ${coord} [${row}, ${col}], isOpponent: ${this.isOpponent}, currentAction: ${Game.currentAction}`);
     
-    if (this.isOpponent && Game.currentAction) {
-        // This is enemy grid and we have an action selected
+    if (this.isOpponent) {
+        // Clicking on ENEMY grid
+        if (!Game.currentAction) {
+            // No action selected
+            Utils.showNotification('NO ACTION', 'Select SCAN, PROBE, or EXPLOIT first!', 'warning', 2000);
+            console.log('No action selected - showing warning');
+            return;
+        }
+        
+        // Action is selected - execute it
+        console.log('Executing action on enemy grid');
         Game.executeAction(row, col);
-    } else if (!this.isOpponent) {
-        // This is our own grid
+        
+    } else {
+        // Clicking on OWN grid (for inspection/setup)
         this.selectCell(row, col);
-    } else if (this.isOpponent && !Game.currentAction) {
-        // Clicked enemy grid without selecting action
-        Utils.showNotification('NO ACTION', 'Select SCAN, PROBE, or EXPLOIT first!', 'warning', 2000);
+        console.log('Selected own grid cell for inspection');
     }
 }
     

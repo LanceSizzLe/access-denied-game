@@ -5,42 +5,55 @@
 
 const UI = {
     
-    /**
-     * Initialize UI event handlers
-     */
-    init() {
-        // Action buttons
-        document.getElementById('scan-btn').addEventListener('click', () => {
-            Game.selectAction('scan');
-        });
-        
-        document.getElementById('probe-btn').addEventListener('click', () => {
-            Game.selectAction('probe');
-        });
-        
-        document.getElementById('exploit-btn').addEventListener('click', () => {
-            Game.selectAction('exploit');
-        });
-        
-        // Footer buttons
-        document.getElementById('end-turn-btn').addEventListener('click', () => {
-            Game.endTurn();
-        });
-        
-        document.getElementById('reset-btn').addEventListener('click', () => {
-            if (confirm('Reset the game? All progress will be lost.')) {
-                location.reload();
-            }
-        });
-        
-        document.getElementById('help-btn').addEventListener('click', () => {
-            this.showHelpModal();
-        });
-        
-        document.getElementById('rules-btn').addEventListener('click', () => {
-            this.showRulesModal();
-        });
-    },
+   /**
+ * Initialize UI event handlers
+ */
+init() {
+    // Action buttons - PREVENT PROPAGATION
+    document.getElementById('scan-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log('SCAN button clicked');
+        Game.selectAction('scan');
+    });
+    
+    document.getElementById('probe-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log('PROBE button clicked');
+        Game.selectAction('probe');
+    });
+    
+    document.getElementById('exploit-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log('EXPLOIT button clicked');
+        Game.selectAction('exploit');
+    });
+    
+    // Footer buttons
+    document.getElementById('end-turn-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        Game.endTurn();
+    });
+    
+    document.getElementById('reset-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (confirm('Reset the game? All progress will be lost.')) {
+            location.reload();
+        }
+    });
+    
+    document.getElementById('help-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.showHelpModal();
+    });
+    
+    document.getElementById('rules-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.showRulesModal();
+    });
+},
     
     /**
      * Update action button states

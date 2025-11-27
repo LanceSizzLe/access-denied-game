@@ -196,59 +196,66 @@ selectAction(action) {
     console.log(`Action selected: ${action}, currentAction is now: ${this.currentAction}`); // DEBUG
 }
     
-    /**
-     * Execute selected action on target cell
-     */
-    async executeAction(row, col) {
-        if (!this.currentAction) {
-            Utils.showNotification('NO ACTION', 'Select SCAN, PROBE, or EXPLOIT first!', 'warning');
-            return;
-        }
-        
-        const costs = { scan: 1, probe: 2, exploit: 3 };
-        const cost = costs[this.currentAction];
-        
-        // Double check AP
-        if (this.actionPoints < cost) {
-            Utils.showNotification('INSUFFICIENT AP', 'Not enough Action Points', 'error');
-            this.currentAction = null;
-            UI.updateActionButtons(this.actionPoints, null);
-            return;
-        }
-        
-        // Deduct AP
-        this.actionPoints -= cost;
-        Utils.addLog(`> Spent ${cost} AP (${this.actionPoints} remaining)`, 'action');
-        
-        // Remove highlight from enemy grid
-        document.getElementById('opponent-board').style.boxShadow = '';
-        
-        // Execute action
-        let result;
-        const coord = Utils.indexToCoord(row, col);
-        
-        switch (this.currentAction) {
-            case 'scan':
-                result = await Actions.executeScan(this.opponentBoard, row, col);
-                break;
-            case 'probe':
-                result = await Actions.executeProbe(this.opponentBoard, row, col);
-                break;
-            case 'exploit':
-                result = await Actions.executeExploit(this.opponentBoard, row, col);
-                break;
-        }
-        
-        // Clear action selection
+/**
+ * Execute selected action on target cell
+ */
+async executeAction(row, col) {
+    if (!this.currentAction) {
+        Utils.showNotification('NO ACTION', 'Select SCAN, PROBE, or EXPLOIT first!', 'warning');
+        console.log('executeAction called but no action selected');
+        return;
+    }
+    
+    console.log(`Executing ${this.currentAction} on [${row}, ${col}]`);
+    
+    const costs = { scan: 1, probe: 2, exploit: 3 };
+    const cost = costs[this.currentAction];
+    
+    // Double check AP
+    if (this.actionPoints < cost) {
+        Utils.showNotification('INSUFFICIENT AP', 'Not enough Action Points', 'error');
         this.currentAction = null;
         UI.updateActionButtons(this.actionPoints, null);
-        
-        // Update UI
-        this.updateUI();
-        
-        // Check victory
-        this.checkVictoryConditions();
-    },
+        return;
+    }
+    
+    // Deduct AP
+    this.actionPoints -= cost;
+    Utils.addLog(`> Spent ${cost} AP (${this.actionPoints} remaining)`, 'action');
+    
+    // Remove highlight from enemy grid
+    const enemyBoard = document.getElementById('opponent-board');
+    enemyBoard.style.boxShadow = '';
+    enemyBoard.style.borderColor = '';
+    
+    // Execute action
+    let result;
+    const coord = Utils.indexToCoord(row, col);
+    
+    switch (this.currentAction) {
+        case 'scan':
+            result = await Actions.executeScan(this.opponentBoard, row, col);
+            break;
+        case 'probe':
+            result = await Actions.executeProbe(this.opponentBoard, row, col);
+            break;
+        case 'exploit':
+            result = await Actions.executeExploit(this.opponentBoard, row, col);
+            break;
+    }
+    
+    console.log('Action executed, result:', result);
+    
+    // Clear action selection
+    this.currentAction = null;
+    UI.updateActionButtons(this.actionPoints, null);
+    
+    // Update UI
+    this.updateUI();
+    
+    // Check victory
+    this.checkVictoryConditions();
+}
     
     /**
      * End current turn

@@ -1,0 +1,41 @@
+{
+  "name": "access-denied-game",
+  "version": "0.1.0",
+  "description": "A tactical cybersecurity board game brought to the web. Educational tool for CMPG215 cybersecurity courses.",
+  "main": "src/index.html",
+  "scripts": {
+    "serve": "python -m http.server 8000",
+    "dev": "live-server src/",
+    "lint": "eslint src/js/",
+    "format": "prettier --write 'src/**/*.{html,css,js}'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/access-denied-game.git"
+  },
+  "keywords": [
+    "cybersecurity",
+    "education",
+    "game",
+    "strategy",
+    "serious-game",
+    "cybok",
+    "security-education",
+    "board-game"
+  ],
+  "authors": [
+    "Michael De Jager",
+    "Lance Bunt",
+    "Klasie Botha"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/access-denied-game/issues"
+  },
+  "homepage": "https://yourusername.github.io/access-denied-game/",
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "live-server": "^1.2.2"
+  }
+}

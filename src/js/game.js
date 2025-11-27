@@ -1,6 +1,5 @@
 /* ============================================
-   MAIN GAME CONTROLLER
-   Game state, initialization, flow control
+   MAIN GAME CONTROLLER - FIXED & ENHANCED
    ============================================ */
 
 const Game = {
@@ -11,13 +10,14 @@ const Game = {
     
     // Turn management
     currentRound: 1,
-    currentPlayer: 'player', // 'player' or 'opponent'
+    currentPlayer: 'player',
     currentAction: null,
     selectedCell: null,
     skipNextTurn: false,
     
     // Resources
     actionPoints: 3,
+    maxActionPoints: 6,
     intelligence: 0,
     
     // Game status
@@ -34,7 +34,7 @@ const Game = {
         const loadingScreen = document.getElementById('loading-screen');
         const gameContainer = document.getElementById('game-container');
         
-        await Utils.sleep(2000); // Simulate loading
+        await Utils.sleep(2000);
         
         // Hide loading, show game
         loadingScreen.style.animation = 'fadeOut 0.5s ease';
@@ -62,83 +62,71 @@ const Game = {
         
         Utils.addLog('> SYSTEM INITIALIZED', 'system');
         Utils.addLog('> GAME START', 'system');
-        Utils.showNotification('GAME START', 'Build your network and breach your opponent!', 'success', 4000);
+        Utils.showNotification('GAME START', 'Select an action, then click enemy grid to execute!', 'success', 5000);
     },
     
     /**
      * Setup initial game state
      */
     setupGame() {
-        // Setup player's network
         this.setupPlayerNetwork();
-        
-        // Setup opponent's network (AI/hidden)
         this.setupOpponentNetwork();
-        
-        // Draw initial cards
         this.cardManager.drawCards(2);
-        
-        // Initialize threat track
         UI.updateThreatTrack(this.currentRound);
-        
-        // Update UI
         this.updateUI();
     },
     
     /**
-     * Setup player's network (for demo - in real game, player would place these)
+     * Setup player's network
      */
     setupPlayerNetwork() {
-        // Database Server (3 segments) - L-shaped
+        // Database Server (3 segments)
         this.playerBoard.placeServer('db', [[1, 1], [1, 2], [2, 1]], true);
         
-        // Web Server (2 segments) - horizontal
+        // Web Server (2 segments)
         this.playerBoard.placeServer('web', [[0, 4], [0, 5]], false);
         
-        // Email Server (2 segments) - vertical
+        // Email Server (2 segments)
         this.playerBoard.placeServer('email', [[3, 3], [4, 3]], true);
         
-        // Infrastructure Server (2 segments) - horizontal
+        // Infrastructure Server (2 segments)
         this.playerBoard.placeServer('infra', [[5, 0], [5, 1]], true);
         
-        // Place firewalls
-        this.playerBoard.placeFirewall(1, 0); // Protecting DB
-        this.playerBoard.placeFirewall(2, 2); // Protecting DB
-        this.playerBoard.placeFirewall(0, 3); // Protecting Web
-        this.playerBoard.placeFirewall(4, 2); // Protecting Email
+        // Firewalls
+        this.playerBoard.placeFirewall(1, 0);
+        this.playerBoard.placeFirewall(2, 2);
+        this.playerBoard.placeFirewall(0, 3);
+        this.playerBoard.placeFirewall(4, 2);
         
-        // Place honeypot
+        // Honeypot
         this.playerBoard.placeHoneypot(2, 4);
         
         Utils.addLog('> Player network configured', 'system');
     },
     
     /**
-     * Setup opponent's network (hidden)
+     * Setup opponent's network
      */
     setupOpponentNetwork() {
-        // For demo purposes, create a predefined opponent network
-        // In a real game with AI, this would be randomized or strategic
-        
-        // Database Server (3 segments) - straight
+        // Database Server
         this.opponentBoard.placeServer('db', [[0, 0], [0, 1], [0, 2]], true);
         
-        // Web Server (2 segments) - vertical
+        // Web Server
         this.opponentBoard.placeServer('web', [[2, 5], [3, 5]], true);
         
-        // Email Server (2 segments) - horizontal
+        // Email Server
         this.opponentBoard.placeServer('email', [[4, 1], [4, 2]], false);
         
-        // Infrastructure Server (2 segments) - vertical
+        // Infrastructure Server
         this.opponentBoard.placeServer('infra', [[3, 3], [4, 3]], true);
         
-        // Place firewalls
+        // Firewalls
         this.opponentBoard.placeFirewall(1, 1);
         this.opponentBoard.placeFirewall(2, 4);
         this.opponentBoard.placeFirewall(3, 2);
         this.opponentBoard.placeFirewall(5, 3);
         
-        // Place honeypot
+        // Honeypot
         this.opponentBoard.placeHoneypot(1, 3);
         
         Utils.addLog('> Opponent network configured', 'system');
@@ -150,24 +138,27 @@ const Game = {
     startTurn() {
         if (!this.gameActive) return;
         
-        // Check if turn should be skipped (honeypot penalty)
+        // Check honeypot skip
         if (this.skipNextTurn) {
             Utils.addLog('⚠ TURN SKIPPED - Honeypot penalty', 'error');
-            Utils.showNotification('TURN SKIPPED', 'Honeypot penalty - lose this turn', 'error', 3000);
+            Utils.showNotification('TURN SKIPPED', 'Honeypot penalty active!', 'error', 3000);
             this.skipNextTurn = false;
-            this.endTurn();
+            setTimeout(() => this.endTurn(), 2000);
             return;
         }
         
-        // Gain AP
-        this.actionPoints = Math.min(this.actionPoints + 1, 6);
+        // Gain AP (max 6)
+        this.actionPoints = Math.min(this.actionPoints + 1, this.maxActionPoints);
         
         // Draw card if intelligence >= 6
-        if (this.intelligence >= 6) {
-            this.cardManager.drawCards(1);
+        if (this.intelligence >= 6 && this.cardManager.hand.length < this.cardManager.maxHandSize) {
+            const drawn = this.cardManager.drawCards(1);
+            if (drawn.length > 0) {
+                Utils.addLog(`> Drew card: ${drawn[0].name}`, 'success');
+                Utils.showNotification('CARD DRAWN', drawn[0].name, 'success', 2000);
+            }
         }
         
-        // Update UI
         this.updateUI();
         
         Utils.addLog(`═══ ROUND ${this.currentRound} START ═══`, 'system');
@@ -182,15 +173,19 @@ const Game = {
         const cost = costs[action];
         
         if (this.actionPoints < cost) {
-            Utils.showNotification('INSUFFICIENT AP', `${action.toUpperCase()} requires ${cost} AP`, 'error');
+            Utils.showNotification('INSUFFICIENT AP', `${action.toUpperCase()} requires ${cost} AP (You have ${this.actionPoints})`, 'error');
+            Utils.addLog(`✕ Insufficient AP for ${action.toUpperCase()}`, 'error');
             return;
         }
         
         this.currentAction = action;
         UI.updateActionButtons(this.actionPoints, action);
         
-        Utils.addLog(`> Action selected: ${action.toUpperCase()}`, 'action');
-        Utils.showNotification('ACTION SELECTED', `Click enemy grid to ${action.toUpperCase()}`, 'info');
+        Utils.addLog(`> Action selected: ${action.toUpperCase()} (${cost} AP)`, 'action');
+        Utils.showNotification('ACTION SELECTED', `Click enemy grid to ${action.toUpperCase()}`, 'info', 3000);
+        
+        // Highlight enemy grid
+        document.getElementById('opponent-board').style.boxShadow = '0 0 30px rgba(255, 255, 0, 0.5)';
     },
     
     /**
@@ -198,23 +193,32 @@ const Game = {
      */
     async executeAction(row, col) {
         if (!this.currentAction) {
-            Utils.showNotification('NO ACTION', 'Select an action first (SCAN/PROBE/EXPLOIT)', 'warning');
+            Utils.showNotification('NO ACTION', 'Select SCAN, PROBE, or EXPLOIT first!', 'warning');
             return;
         }
         
         const costs = { scan: 1, probe: 2, exploit: 3 };
         const cost = costs[this.currentAction];
         
+        // Double check AP
         if (this.actionPoints < cost) {
             Utils.showNotification('INSUFFICIENT AP', 'Not enough Action Points', 'error');
+            this.currentAction = null;
+            UI.updateActionButtons(this.actionPoints, null);
             return;
         }
         
         // Deduct AP
         this.actionPoints -= cost;
+        Utils.addLog(`> Spent ${cost} AP (${this.actionPoints} remaining)`, 'action');
+        
+        // Remove highlight from enemy grid
+        document.getElementById('opponent-board').style.boxShadow = '';
         
         // Execute action
         let result;
+        const coord = Utils.indexToCoord(row, col);
+        
         switch (this.currentAction) {
             case 'scan':
                 result = await Actions.executeScan(this.opponentBoard, row, col);
@@ -229,11 +233,12 @@ const Game = {
         
         // Clear action selection
         this.currentAction = null;
+        UI.updateActionButtons(this.actionPoints, null);
         
         // Update UI
         this.updateUI();
         
-        // Check victory conditions
+        // Check victory
         this.checkVictoryConditions();
     },
     
@@ -249,30 +254,31 @@ const Game = {
         
         Utils.addLog(`═══ ROUND ${this.currentRound} END ═══`, 'system');
         
+        // Reset action selection
+        this.currentAction = null;
+        UI.updateActionButtons(this.actionPoints, null);
+        
         // Advance round
         this.currentRound++;
         
-        // Check round limit (12 rounds)
+        // Check round limit
         if (this.currentRound > 12) {
             this.endGameAttrition();
             return;
         }
         
-        // Update threat track
         UI.updateThreatTrack(this.currentRound);
         
-        // In a real game, opponent would take their turn here
-        // For this prototype, we'll just start the next player turn
+        // Start next turn
         setTimeout(() => {
             this.startTurn();
-        }, 500);
+        }, 1000);
     },
     
     /**
-     * Update UI elements
+     * Update UI
      */
     updateUI() {
-        // Update status bar
         document.getElementById('current-round').textContent = this.currentRound;
         document.getElementById('current-ap').textContent = this.actionPoints;
         document.getElementById('intel-count').textContent = this.intelligence;
@@ -280,12 +286,11 @@ const Game = {
         const breachedCount = this.opponentBoard.getBreachCount();
         document.getElementById('breach-count').textContent = `${breachedCount}/4`;
         
-        // Update action buttons
         UI.updateActionButtons(this.actionPoints, this.currentAction);
     },
     
     /**
-     * Check all victory conditions
+     * Check victory conditions
      */
     checkVictoryConditions() {
         // Offensive victory (3+ servers breached)
@@ -300,29 +305,26 @@ const Game = {
             this.endGame('intelligence');
             return;
         }
-        
-        // Defensive victory checked in honeypot trigger
-        // Attrition victory checked in endTurn
     },
     
     /**
-     * End game due to attrition (round 12)
+     * End game - attrition
      */
     endGameAttrition() {
         const playerBreaches = this.playerBoard.getBreachCount();
         const opponentBreaches = this.opponentBoard.getBreachCount();
         
         if (opponentBreaches < playerBreaches) {
-            this.endGame('attrition-player');
-        } else if (playerBreaches < opponentBreaches) {
             this.endGame('attrition-opponent');
+        } else if (playerBreaches < opponentBreaches) {
+            this.endGame('attrition-player');
         } else {
             this.endGame('draw');
         }
     },
     
     /**
-     * End the game
+     * End game
      */
     endGame(reason) {
         this.gameActive = false;
@@ -338,7 +340,7 @@ const Game = {
                 
             case 'intelligence':
                 title = '🔍 INTELLIGENCE VICTORY!';
-                message = 'You gathered 12 Intelligence Tokens through reconnaissance!';
+                message = 'You gathered 12 Intelligence Tokens!';
                 type = 'success';
                 break;
                 
@@ -356,13 +358,13 @@ const Game = {
                 
             case 'attrition-opponent':
                 title = '💀 DEFEAT';
-                message = 'Your network suffered more breaches by round 12';
+                message = 'Your network suffered more breaches';
                 type = 'error';
                 break;
                 
             case 'draw':
                 title = '⚖️ STALEMATE';
-                message = 'Both networks equally compromised after 12 rounds';
+                message = 'Equal breaches after 12 rounds';
                 type = 'warning';
                 break;
                 
@@ -372,58 +374,47 @@ const Game = {
                 type = 'info';
         }
         
-        Utils.addLog(`═══ GAME OVER: ${title} ═══`, 'system');
+        Utils.addLog(`═══ ${title} ═══`, 'system');
         
-        // Show victory modal
         const modalContent = `
             <h2>${title}</h2>
-            <p>${message}</p>
+            <p style="font-size: 16px; margin: 20px 0;">${message}</p>
             
             <h3>FINAL STATISTICS</h3>
-            <p><strong>Rounds Played:</strong> ${this.currentRound}</p>
-            <p><strong>Intelligence Gathered:</strong> ${this.intelligence}</p>
-            <p><strong>Enemy Servers Breached:</strong> ${this.opponentBoard.getBreachCount()}/4</p>
-            <p><strong>Your Servers Breached:</strong> ${this.playerBoard.getBreachCount()}/4</p>
-            
-            <h3>EDUCATIONAL CONCEPTS PRACTICED</h3>
-            <ul>
-                <li>Network Reconnaissance (Scanning)</li>
-                <li>Vulnerability Discovery (Probing)</li>
-                <li>Exploit Execution (Breaching)</li>
-                <li>Defense-in-Depth (Firewalls & Honeypots)</li>
-                <li>Resource Management (Action Points)</li>
-                <li>Risk Assessment (Honeypot Avoidance)</li>
-            </ul>
-            
-            <div style="margin-top: 20px; padding: 15px; border: 2px solid var(--color-matrix-green); background: rgba(0,255,65,0.1);">
-                <strong>CyBOK ALIGNMENT:</strong><br>
-                This game reinforced concepts from Network Security, Vulnerability Management, and Operational Security domains.
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+                <div><strong>Rounds:</strong> ${this.currentRound}</div>
+                <div><strong>Intel:</strong> ${this.intelligence}</div>
+                <div><strong>Enemy Breaches:</strong> ${this.opponentBoard.getBreachCount()}/4</div>
+                <div><strong>Your Breaches:</strong> ${this.playerBoard.getBreachCount()}/4</div>
             </div>
             
-            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: var(--color-matrix-green); color: var(--color-black); border: none; font-family: var(--font-mono); font-weight: 700; cursor: pointer; font-size: 14px;">
-                PLAY AGAIN
-            </button>
+            <h3>CONCEPTS PRACTICED</h3>
+            <ul style="text-align: left; line-height: 1.8;">
+                <li>Network Reconnaissance</li>
+                <li>Vulnerability Discovery</li>
+                <li>Exploit Execution</li>
+                <li>Defense-in-Depth</li>
+                <li>Resource Management</li>
+            </ul>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <button onclick="location.reload()" style="padding: 15px 40px; background: var(--color-matrix-green); color: var(--color-black); border: none; font-family: var(--font-mono); font-weight: 700; cursor: pointer; font-size: 16px; letter-spacing: 2px;">
+                    PLAY AGAIN
+                </button>
+            </div>
         `;
         
-        Utils.showModal(modalContent);
-        Utils.showNotification(title, message, type, 0); // No auto-dismiss
+        setTimeout(() => {
+            Utils.showModal(modalContent);
+            Utils.showNotification(title, message, type, 0);
+        }, 500);
     }
 };
 
-// Initialize game when page loads
+// Initialize game
 document.addEventListener('DOMContentLoaded', () => {
-    console.log(`
-    ╔═══════════════════════════════════════╗
-    ║                                       ║
-    ║       ACCESS DENIED!                  ║
-    ║       Beyond the Firewall             ║
-    ║                                       ║
-    ║   Cybersecurity Educational Game      ║
-    ║   North-West University               ║
-    ║   CMPG215 | CyBOK Aligned            ║
-    ║                                       ║
-    ╚═══════════════════════════════════════╝
-    `);
+    console.log('%c ACCESS DENIED! ', 'background: #00FF41; color: #000; font-size: 20px; font-weight: bold; padding: 10px;');
+    console.log('%c Beyond the Firewall | CMPG215 ', 'background: #00D9FF; color: #000; font-size: 12px; padding: 5px;');
     
     Game.init();
 });

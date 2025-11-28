@@ -193,8 +193,34 @@ selectAction(action) {
     enemyBoard.style.boxShadow = '0 0 30px rgba(255, 255, 0, 0.6)';
     enemyBoard.style.borderColor = 'var(--color-caution-yellow)';
     
-    console.log(`Action selected: ${action}, currentAction is now: ${this.currentAction}`); // DEBUG
-}
+    console.log(`Action selected: ${action}, currentAction is now: ${this.currentAction}`);
+},
+```
+
+**CRITICAL:** Notice the comma `,` at the end! Make sure it's there.
+
+---
+
+### FIX 3: Verify All Files Are Saved
+
+Sometimes files don't save properly. Check:
+1. All files show **no unsaved indicator** (dot on tab)
+2. Refresh browser with **hard refresh**: `Cmd+Shift+R` or `Ctrl+Shift+R`
+
+---
+
+## 🚨 EMERGENCY ROLLBACK
+
+If you can't find the error, revert to the working version by replacing the files you changed with their original versions, then we'll fix them one at a time.
+
+---
+
+## 📸 SEND ME THE CONSOLE ERROR
+
+Once you open the console (F12), you'll see something like:
+```
+Uncategorized SyntaxError: Unexpected token ','
+  at game.js:123
     
 /**
  * Execute selected action on target cell

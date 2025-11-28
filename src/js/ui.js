@@ -5,55 +5,55 @@
 
 const UI = {
     
-   /**
- * Initialize UI event handlers
- */
-init() {
-    // Action buttons - PREVENT PROPAGATION
-    document.getElementById('scan-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('SCAN button clicked');
-        Game.selectAction('scan');
-    });
-    
-    document.getElementById('probe-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('PROBE button clicked');
-        Game.selectAction('probe');
-    });
-    
-    document.getElementById('exploit-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('EXPLOIT button clicked');
-        Game.selectAction('exploit');
-    });
-    
-    // Footer buttons
-    document.getElementById('end-turn-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        Game.endTurn();
-    });
-    
-    document.getElementById('reset-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (confirm('Reset the game? All progress will be lost.')) {
-            location.reload();
-        }
-    });
-    
-    document.getElementById('help-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.showHelpModal();
-    });
-    
-    document.getElementById('rules-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.showRulesModal();
-    });
-},
+    /**
+     * Initialize UI event handlers
+     */
+    init() {
+        // Action buttons - PREVENT PROPAGATION
+        document.getElementById('scan-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            console.log('SCAN button clicked');
+            Game.selectAction('scan');
+        });
+        
+        document.getElementById('probe-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            console.log('PROBE button clicked');
+            Game.selectAction('probe');
+        });
+        
+        document.getElementById('exploit-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            console.log('EXPLOIT button clicked');
+            Game.selectAction('exploit');
+        });
+        
+        // Footer buttons
+        document.getElementById('end-turn-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            Game.endTurn();
+        });
+        
+        document.getElementById('reset-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm('Reset the game? All progress will be lost.')) {
+                location.reload();
+            }
+        });
+        
+        document.getElementById('help-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.showHelpModal();
+        });
+        
+        document.getElementById('rules-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.showRulesModal();
+        });
+    },
     
     /**
      * Update action button states
@@ -112,63 +112,65 @@ init() {
             
             <h3>ACTIONS</h3>
             <p><strong>SCAN (1 AP):</strong> Detect if a server exists at target coordinates.</p>
-            <p><strong>PROBE (2 AP):</strong> Reveal server type and risktriggering honeypots.</p>
-<p><strong>EXPLOIT (3 AP):</strong> Attempt to breach a vulnerable server segment.</p>
-        <h3>RESOURCES</h3>
-        <p><strong>Action Points (AP):</strong> Gained each turn. Maximum 6 AP.</p>
-        <p><strong>Intelligence:</strong> Gained from successful scans. At 6+ Intel, draw Tool Cards.</p>
+            <p><strong>PROBE (2 AP):</strong> Reveal server type and risk triggering honeypots.</p>
+            <p><strong>EXPLOIT (3 AP):</strong> Attempt to breach a vulnerable server segment.</p>
+            
+            <h3>RESOURCES</h3>
+            <p><strong>Action Points (AP):</strong> Gained each turn. Maximum 6 AP.</p>
+            <p><strong>Intelligence:</strong> Gained from successful scans. At 6+ Intel, draw Tool Cards.</p>
+            
+            <h3>DEFENSES</h3>
+            <p><strong>Firewalls:</strong> Block attacks but degrade after 2 hits.</p>
+            <p><strong>Honeypots:</strong> Fake servers that cause attacker to lose next turn if probed.</p>
+            
+            <h3>VICTORY CONDITIONS</h3>
+            <ul>
+                <li>Breach 3 of 4 enemy servers</li>
+                <li>Accumulate 12 Intelligence Tokens</li>
+                <li>Trigger enemy honeypot twice (Defensive Victory)</li>
+                <li>Survive to Round 12 with fewer breaches</li>
+            </ul>
+        `;
         
-        <h3>DEFENSES</h3>
-        <p><strong>Firewalls:</strong> Block attacks but degrade after 2 hits.</p>
-        <p><strong>Honeypots:</strong> Fake servers that cause attacker to lose next turn if probed.</p>
-        
-        <h3>VICTORY CONDITIONS</h3>
-        <ul>
-            <li>Breach 3 of 4 enemy servers</li>
-            <li>Accumulate 12 Intelligence Tokens</li>
-            <li>Trigger enemy honeypot twice (Defensive Victory)</li>
-            <li>Survive to Round 12 with fewer breaches</li>
-        </ul>
-    `;
+        Utils.showModal(content);
+    },
     
-    Utils.showModal(content);
-},
-
-/**
- * Show rules modal
- */
-showRulesModal() {
-    const content = `
-        <h2>GAME RULES</h2>
+    /**
+     * Show rules modal
+     */
+    showRulesModal() {
+        const content = `
+            <h2>GAME RULES</h2>
+            
+            <h3>SETUP</h3>
+            <p>Each player has a 6×6 grid with:</p>
+            <ul>
+                <li>4 Servers (Database, Web, Email, Infrastructure)</li>
+                <li>4 Vulnerability markers (placed under servers)</li>
+                <li>4 Firewalls (placed between grid squares)</li>
+                <li>1 Honeypot (placed on empty square)</li>
+            </ul>
+            
+            <h3>TURN STRUCTURE</h3>
+            <ol>
+                <li><strong>Refresh:</strong> Gain +1 AP, advance threat track</li>
+                <li><strong>Planning:</strong> Select one action (Scan/Probe/Exploit)</li>
+                <li><strong>Execution:</strong> Perform action on enemy grid</li>
+                <li><strong>Reaction:</strong> Defender may play Tool Cards</li>
+                <li><strong>Maintenance:</strong> Update game state, check victory</li>
+            </ol>
+            
+            <h3>SERVER TYPES</h3>
+            <p><strong>Database (3 segments):</strong> Harder to breach, high value</p>
+            <p><strong>Web, Email, Infrastructure (2 segments each):</strong> Standard targets</p>
+            
+            <h3>TOOL CARDS</h3>
+            <p>Draw 1 card per turn when Intelligence ≥ 6. Max hand size: 4 cards.</p>
+            
+            <h3>EDUCATIONAL VALUE</h3>
+            <p>This game teaches network security, vulnerability management, and defense-in-depth strategies aligned with CyBOK framework.</p>
+        `;
         
-        <h3>SETUP</h3>
-        <p>Each player has a 6×6 grid with:</p>
-        <ul>
-            <li>4 Servers (Database, Web, Email, Infrastructure)</li>
-            <li>4 Vulnerability markers (placed under servers)</li>
-            <li>4 Firewalls (placed between grid squares)</li>
-            <li>1 Honeypot (placed on empty square)</li>
-        </ul>
-        
-        <h3>TURN STRUCTURE</h3>
-        <ol>
-            <li><strong>Refresh:</strong> Gain +1 AP, advance threat track</li>
-            <li><strong>Planning:</strong> Select one action (Scan/Probe/Exploit)</li>
-            <li><strong>Execution:</strong> Perform action on enemy grid</li>
-            <li><strong>Reaction:</strong> Defender may play Tool Cards</li>
-            <li><strong>Maintenance:</strong> Update game state, check victory</li>
-        </ol>
-        
-        <h3>SERVER TYPES</h3>
-        <p><strong>Database (3 segments):</strong> Harder to breach, high value</p>
-        <p><strong>Web, Email, Infrastructure (2 segments each):</strong> Standard targets</p>
-        
-        <h3>TOOL CARDS</h3>
-        <p>Draw 1 card per turn when Intelligence ≥ 6. Max hand size: 4 cards.</p>
-        
-        <h3>EDUCATIONAL VALUE</h3>
-        <p>This game teaches network security, vulnerability management, and defense-in-depth strategies aligned with CyBOK framework.</p>
-    `;
-    
-    Utils.showModal(content);
-}
+        Utils.showModal(content);
+    }
+};

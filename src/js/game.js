@@ -1,5 +1,5 @@
 /* ============================================
-   MAIN GAME CONTROLLER - SYNTAX FIXED
+   MAIN GAME CONTROLLER - FIXED WITH TITLE SCREEN
    ============================================ */
 
 const Game = {
@@ -55,8 +55,6 @@ const Game = {
         this.cardManager.drawCards(2);
         UI.updateThreatTrack(this.currentRound);
         this.updateUI();
-         if (Tutorial.active && this.currentAction) {
-        Tutorial.actionCompleted(this.currentAction);
     },
     
     setupPlayerNetwork: function() {
@@ -155,6 +153,7 @@ const Game = {
         enemyBoard.style.boxShadow = '';
         
         let result;
+        const actionType = this.currentAction;
         
         switch (this.currentAction) {
             case 'scan':
@@ -172,6 +171,11 @@ const Game = {
         UI.updateActionButtons(this.actionPoints, null);
         this.updateUI();
         this.checkVictoryConditions();
+        
+        // Notify tutorial if active
+        if (typeof Tutorial !== 'undefined' && Tutorial.active) {
+            Tutorial.actionCompleted(actionType);
+        }
     },
     
     endTurn: function() {
@@ -297,8 +301,12 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('%c ACCESS DENIED! ', 'background: #00FF41; color: #000; font-size: 20px; font-weight: bold; padding: 10px;');
     console.log('%c Beyond the Firewall | CMPG215 ', 'background: #00D9FF; color: #000; font-size: 12px; padding: 5px;');
     
-    // Show title screen instead of directly starting game
-    TitleScreen.show();
-    
-    // Note: Game.init() will be called when user clicks START GAME
+    // Check if TitleScreen exists (tutorial/title screen files loaded)
+    if (typeof TitleScreen !== 'undefined') {
+        // Show title screen
+        TitleScreen.show();
+    } else {
+        // Fallback: start game directly (for testing without title screen)
+        Game.init();
+    }
 });

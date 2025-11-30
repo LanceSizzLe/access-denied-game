@@ -74,20 +74,21 @@ const TitleScreen = {
         return screen;
     },
     
-    /**
-     * Start main game
-     */
-    startGame: function() {
-        console.log('Starting game...');
-        
-        const titleScreen = document.getElementById('title-screen');
-        titleScreen.style.animation = 'fadeOut 0.5s ease';
-        
-        setTimeout(() => {
-            titleScreen.remove();
-            // Game will auto-start from the existing init in game.js
-        }, 500);
-    },
+/**
+ * Start main game
+ */
+startGame: function() {
+    console.log('Starting game...');
+    
+    const titleScreen = document.getElementById('title-screen');
+    titleScreen.style.animation = 'fadeOut 0.5s ease';
+    
+    setTimeout(function() {
+        titleScreen.remove();
+        // Now start the game initialization
+        Game.init();
+    }, 500);
+},
     
     /**
      * Start tutorial

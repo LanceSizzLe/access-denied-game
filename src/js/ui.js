@@ -105,35 +105,35 @@ const UI = {
     /**
      * Show help modal
      */
-    showHelpModal() {
-        const content = `
-            <h2>HOW TO PLAY</h2>
-            <p><strong>OBJECTIVE:</strong> Breach 3 of your opponent's 4 servers before they breach yours.</p>
-            
-            <h3>ACTIONS</h3>
-            <p><strong>SCAN (1 AP):</strong> Detect if a server exists at target coordinates.</p>
-            <p><strong>PROBE (2 AP):</strong> Reveal server type and risk triggering honeypots.</p>
-            <p><strong>EXPLOIT (3 AP):</strong> Attempt to breach a vulnerable server segment.</p>
-            
-            <h3>RESOURCES</h3>
-            <p><strong>Action Points (AP):</strong> Gained each turn. Maximum 6 AP.</p>
-            <p><strong>Intelligence:</strong> Gained from successful scans. At 6+ Intel, draw Tool Cards.</p>
-            
-            <h3>DEFENSES</h3>
-            <p><strong>Firewalls:</strong> Block attacks but degrade after 2 hits.</p>
-            <p><strong>Honeypots:</strong> Fake servers that cause attacker to lose next turn if probed.</p>
-            
-            <h3>VICTORY CONDITIONS</h3>
-            <ul>
-                <li>Breach 3 of 4 enemy servers</li>
-                <li>Accumulate 12 Intelligence Tokens</li>
-                <li>Trigger enemy honeypot twice (Defensive Victory)</li>
-                <li>Survive to Round 12 with fewer breaches</li>
-            </ul>
-        `;
+showHelpModal: function() {
+    const content = `
+        <h2>HOW TO PLAY</h2>
+        <p><strong>OBJECTIVE:</strong> Breach 3 of your opponent's 4 servers.</p>
         
-        Utils.showModal(content);
-    },
+        <div style="text-align: center; margin: 20px 0;">
+            <button onclick="Tutorial.start()" style="padding: 12px 24px; background: var(--color-cyber-cyan); color: var(--color-black); border: none; cursor: pointer; font-family: var(--font-mono); font-weight: 700; font-size: 14px; margin: 0 10px;">
+                🎓 START TUTORIAL
+            </button>
+            <button onclick="document.getElementById('modal-overlay').classList.add('hidden')" style="padding: 12px 24px; background: var(--color-matrix-green); color: var(--color-black); border: none; cursor: pointer; font-family: var(--font-mono); font-weight: 700; font-size: 14px; margin: 0 10px;">
+                CLOSE
+            </button>
+        </div>
+        
+        <h3>ACTIONS</h3>
+        <p><strong>SCAN (1 AP):</strong> Detect if a server exists.</p>
+        <p><strong>PROBE (2 AP):</strong> Reveal server type.</p>
+        <p><strong>EXPLOIT (3 AP):</strong> Breach vulnerable servers.</p>
+        
+        <h3>VICTORY CONDITIONS</h3>
+        <ul>
+            <li>Breach 3 of 4 enemy servers</li>
+            <li>Accumulate 12 Intelligence</li>
+            <li>Survive to Round 12</li>
+        </ul>
+    `;
+    
+    Utils.showModal(content);
+},
     
     /**
      * Show rules modal

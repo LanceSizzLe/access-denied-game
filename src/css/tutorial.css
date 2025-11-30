@@ -1,0 +1,289 @@
+/* ============================================
+   TUTORIAL SYSTEM STYLES
+   ============================================ */
+
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.tutorial-container {
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    background: var(--color-black);
+    border: 3px solid var(--color-matrix-green);
+    box-shadow: 0 0 50px rgba(0, 255, 65, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Tutorial Header */
+.tutorial-header {
+    background: linear-gradient(180deg, rgba(0, 255, 65, 0.1), transparent);
+    border-bottom: 2px solid var(--color-matrix-green);
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutorial-progress {
+    flex: 1;
+    margin-right: var(--spacing-lg);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 255, 65, 0.2);
+    border: 1px solid var(--color-matrix-green);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--color-matrix-green);
+    box-shadow: 0 0 10px var(--color-matrix-green);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--color-cyber-cyan);
+    letter-spacing: 1px;
+}
+
+.tutorial-skip {
+    background: transparent;
+    border: 1px solid var(--color-warning-red);
+    color: var(--color-warning-red);
+    padding: 6px 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tutorial-skip:hover {
+    background: var(--color-warning-red);
+    color: var(--color-black);
+}
+
+/* Tutorial Content */
+.tutorial-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+}
+
+.tutorial-character {
+    border-right: 1px solid var(--color-matrix-green);
+    padding-right: var(--spacing-lg);
+}
+
+.character-avatar {
+    text-align: center;
+    position: sticky;
+    top: 0;
+}
+
+.avatar-icon {
+    font-size: 80px;
+    margin-bottom: var(--spacing-sm);
+    filter: drop-shadow(0 0 10px var(--color-matrix-green));
+}
+
+.avatar-name {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--color-matrix-green);
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+}
+
+.avatar-title {
+    font-size: 10px;
+    color: var(--color-cyber-cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.tutorial-message {
+    min-height: 0;
+}
+
+.tutorial-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--color-matrix-green);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.tutorial-text {
+    color: var(--color-code-white);
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.tutorial-text strong {
+    color: var(--color-matrix-green);
+}
+
+.tutorial-text em {
+    color: var(--color-cyber-cyan);
+    font-style: normal;
+}
+
+.tutorial-box {
+    background: rgba(0, 255, 65, 0.05);
+    border-left: 3px solid var(--color-matrix-green);
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+    line-height: 1.6;
+}
+
+.cybok-note {
+    background: rgba(0, 217, 255, 0.05);
+    border-left: 3px solid var(--color-cyber-cyan);
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.tutorial-theory {
+    background: rgba(255, 255, 0, 0.05);
+    border: 2px solid var(--color-caution-yellow);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    line-height: 1.6;
+    font-size: 13px;
+    color: var(--color-code-white);
+    transition: all 0.3s ease;
+}
+
+.tutorial-theory.hidden {
+    display: none;
+}
+
+.tutorial-theory strong {
+    color: var(--color-caution-yellow);
+}
+
+/* Tutorial Footer */
+.tutorial-footer {
+    border-top: 2px solid var(--color-matrix-green);
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    background: rgba(0, 255, 65, 0.03);
+}
+
+.tutorial-btn {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--color-black);
+    border: 2px solid var(--color-matrix-green);
+    color: var(--color-matrix-green);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tutorial-btn:hover:not(:disabled) {
+    background: var(--color-matrix-green);
+    color: var(--color-black);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+}
+
+.tutorial-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.tutorial-btn-primary {
+    border-color: var(--color-cyber-cyan);
+    color: var(--color-cyber-cyan);
+}
+
+.tutorial-btn-primary:hover:not(:disabled) {
+    background: var(--color-cyber-cyan);
+    color: var(--color-black);
+}
+
+.tutorial-btn-complete {
+    border-color: var(--color-matrix-green);
+    background: var(--color-matrix-green);
+    color: var(--color-black);
+    animation: pulse-glow 1.5s infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(0, 255, 65, 0.8);
+    }
+}
+
+.toggle-theory-btn {
+    border-color: var(--color-caution-yellow);
+    color: var(--color-caution-yellow);
+}
+
+.toggle-theory-btn:hover {
+    background: var(--color-caution-yellow);
+    color: var(--color-black);
+}
+
+/* Tutorial Highlights */
+.tutorial-highlight {
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.8) !important;
+    border-color: var(--color-caution-yellow) !important;
+    animation: highlight-pulse 2s infinite !important;
+}
+
+@keyframes highlight-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Scrollbar for tutorial content */
+.tutorial-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tutorial-content::-webkit-scrollbar-track {
+    background: rgba(0, 255, 65, 0.1);
+}
+
+.tutorial-content::-webkit-scrollbar-thumb {
+    background: var(--color-matrix-green);
+    border: 1px solid var(--color-black);
+}

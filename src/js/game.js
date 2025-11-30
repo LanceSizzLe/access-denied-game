@@ -55,6 +55,8 @@ const Game = {
         this.cardManager.drawCards(2);
         UI.updateThreatTrack(this.currentRound);
         this.updateUI();
+         if (Tutorial.active && this.currentAction) {
+        Tutorial.actionCompleted(this.currentAction);
     },
     
     setupPlayerNetwork: function() {

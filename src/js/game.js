@@ -290,7 +290,13 @@ const Game = {
     }
 };
 
+// Initialize game when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('ACCESS DENIED! - Initializing...');
-    Game.init();
+    console.log('%c ACCESS DENIED! ', 'background: #00FF41; color: #000; font-size: 20px; font-weight: bold; padding: 10px;');
+    console.log('%c Beyond the Firewall | CMPG215 ', 'background: #00D9FF; color: #000; font-size: 12px; padding: 5px;');
+    
+    // Show title screen instead of directly starting game
+    TitleScreen.show();
+    
+    // Note: Game.init() will be called when user clicks START GAME
 });

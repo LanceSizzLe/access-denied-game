@@ -31,7 +31,7 @@ Aligned with CyBOK (Cyber Security Body of Knowledge) framework.
 ## 🚀 Quick Start
 
 ### Play Online
-Visit: [https://yourusername.github.io/access-denied-game/](https://yourusername.github.io/access-denied-game/)
+Visit: To be shared
 
 ### Run Locally
 ```bash
